@@ -1,57 +1,74 @@
-import { useEffect, useState } from "react"
-
-const API_KEY: string = '9a0e9f98'
-const URL_SEARCH_MOVIES_BY_TITLE: string =  `https://www.omdbapi.com/?apikey=${API_KEY}&s=`
-
-type TypeMovie = {
-  imdbID: string,
-  Title: string,
-  Year: string,
-  Type: string,
-  Poster: string
-}
-
-type TypeMovieMapped = {
-  id: string,
-  title: string,
-  year: string,
-  type: string,
-  poster: string
-}
+import { useCallback, useState } from "react"
+import { getMoviesByTitle } from "./services/movies"
+import debounce from 'just-debounce-it'
+// Components
 
 export default function App() {
   const [movies, setMovies] = useState<TypeMovie[]>([])
   const [search, setSearch] = useState('')
-  const [searchError, setSearchError] = useState(false)
+  const [loadingMovies, setLoadingMovies] = useState(false)
+  const [afterSearch, setAfterSearch] = useState('')
+
+  console.log('Render App '+ afterSearch)
 
   const mappedMovie: TypeMovieMapped[] = movies.map((movie) => ({
-    id: movie.imdbID,
-    title: movie.Title,
-    year: movie.Year,
-    type: movie.Type,
-    poster: movie.Poster
+      id: movie.imdbID,
+      title: movie.Title,
+      year: movie.Year,
+      type: movie.Type,
+      poster: movie.Poster
   }))
   
+  type TypeMovie = {
+    imdbID: string,
+    Title: string,
+    Year: string,
+    Type: string,
+    Poster: string
+  }
+
+  type TypeMovieMapped = {
+      id: string,
+      title: string,
+      year: string,
+      type: string,
+      poster: string
+  }
+  
+  const handleDebounce = useCallback(
+    debounce((search: string) => {
+      setLoadingMovies(true)
+      setAfterSearch(search)
+      getMoviesByTitle(search).then(res => {
+        if (!res.response) return
+        setMovies(res.movies)
+      }).finally(() => {
+        setLoadingMovies(false)
+      })
+    }, 300), [])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSearch(value)
+    const search = e.target.value
+    setSearch(search)
+    handleDebounce(search)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (search) {
-      fetch(URL_SEARCH_MOVIES_BY_TITLE+search)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        if (data.Response === 'True') {
-          setMovies(data.Search)
-          return
-        }
-        throw new Error('Error en la petición get')
+    console.log(search)
+    console.log(afterSearch)
+    if (search !== afterSearch) {
+      setLoadingMovies(true)
+      setAfterSearch(search)
+      getMoviesByTitle(search).then(res => {
+        if (!res.response) return
+        setMovies(res.movies)
+      }).finally(() => {
+        setLoadingMovies(false)
       })
     }
   }
+
 
   return(
     <div>
@@ -67,7 +84,10 @@ export default function App() {
       </header>
       <main>
         <ul>
-          {search ? (mappedMovie.map((movie) => {
+          {loadingMovies ? 
+            <p>Loading...</p>
+            :
+            (mappedMovie.map((movie) => {
             return (
             <li key={movie.id}>
               <h3>{movie.title}</h3>
@@ -75,7 +95,7 @@ export default function App() {
               <p>{movie.year}</p>
             </li>
             )
-          })): <p>Error</p>}
+          }))}
         </ul>
       </main>
     </div>
