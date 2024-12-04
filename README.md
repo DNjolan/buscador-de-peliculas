@@ -4,20 +4,20 @@ API a usar: - https://www.omdbapi.com/ Consigue la API Key en la propia página 
 
 Requerimientos:
 
-Listo Necesita mostrar un input para buscar la película y un botón para buscar.
+- Necesita mostrar un input para buscar la película y un botón para buscar.
 
-Listo Lista las películas y muestra el título, año y poster.
+- Hacer el fetching de datos a la API
 
-Listo Que el formulario funcione
+- Lista las películas y muestra el título, año y poster.
 
 - Haz que las películas se muestren en un grid responsive.
 
-Listo Hacer el fetching de datos a la API
+- Que el formulario funcione
 
 Primera iteración:
 
-Listo Evitar que se haga la misma búsqueda dos veces seguidas.
+- Evitar que se haga la misma búsqueda dos veces seguidas.
 
-Listo Haz que la búsqueda se haga automáticamente al escribir.
+- Haz que la búsqueda se haga automáticamente al escribir.
 
-Listo Evita que se haga la búsqueda continuamente al escribir (debounce)
+- Evita que se haga la búsqueda continuamente al escribir (debounce)
