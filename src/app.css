@@ -1,0 +1,33 @@
+ul{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.containerApp {
+    max-width: 1800px;
+    margin: auto;
+
+    header{
+        justify-items: center;
+    }
+    main{
+        justify-items: center;
+
+        ul{
+            display: grid;
+            width: 100%;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            li {
+                justify-items: center;
+                img{
+                    border-radius: 25px;
+                    transition: scale .5s;
+                }
+                img:hover{
+                    scale: 1.05;
+                }
+            }
+        }
+    }
+}
